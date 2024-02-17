@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+
+<html lang="es" dir="ltr">
+    <head>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" href="css/main.css">
+        <title>Photoshop</title>
+    </head>
+
+    <body onload="cargar_imagen_default()">
+        <div class="menu oculto">
+            <div class="deslizMenu"></div>
+
+            <div class="opcionEspecial" onclick="blancoYNegro();">
+                Blanco y negro
+                <p>umbral: <input type="number" id="umbral" value="168" /></p>
+            </div>
+            <div class="opcionFiltro" onclick="escalaGrisesV2()">
+                Escala de grises
+            </div>
+            <div class="opcionFiltro" onclick="negativo()">
+                Negativo
+            </div>
+            <div class="opcionFiltro" onclick="sepia()">
+                Sepia
+            </div>
+            <div class="opcionFiltro" onclick="invertirColores()">
+                Invertir colores
+            </div>
+            <div class="opcionBarra">
+                Saturacion: <br />
+                <input type="range" min="-255" max="255" value="0" step="5" id="saturacionOpcion" onchange="saturacion(this)"  />
+            </div>
+            <div class="opcionBarra">
+                Brillo:  <br />
+                <input type="range" min="5" max="100" value="5" step="1" id="brilloOpcion" onchange="brillo(this)" />
+            </div>
+            <div class="contenedorCajas">
+                <div class="estampa">
+                    <img onclick="dibujarEstampas(this); seleccionado(this)" src="img/estampas/estampa (1).gif" />
+                </div>
+                <div class="estampa">
+                    <img onclick="dibujarEstampas(this); seleccionado(this)" src="img/estampas/estampa (1).jpg" />
+                </div>
+                <div class="estampa">
+                    <img onclick="dibujarEstampas(this); seleccionado(this)" src="img/estampas/estampa (1).png" />
+                </div>
+                <div class="estampa">
+                    <img onclick="dibujarEstampas(this); seleccionado(this)" src="img/estampas/estampa (2).gif" />
+                </div>
+                <div class="estampa">
+                    <img onclick="dibujarEstampas(this); seleccionado(this)" src="img/estampas/estampa (2).jpg" />
+                </div>
+                <div class="estampa">
+                    <img onclick="dibujarEstampas(this); seleccionado(this)" src="img/estampas/estampa (3).jpg" />
+                </div>
+                <div class="estampa">
+                    <img onclick="dibujarEstampas(this); seleccionado(this)" src="img/estampas/estampa (4).jpg" />
+                </div>
+                <div class="estampa">
+                    <img onclick="dibujarEstampas(this); seleccionado(this)" src="img/estampas/estampa (2).gif" />
+                </div>
+                <div class="estampa">
+                    <img onclick="dibujarEstampas(this); seleccionado(this)" src="img/estampas/estampa (1).gif" />
+                </div>
+                <div class="estampa oculto">
+                    <img onclick="dibujarEstampas(this); seleccionado(this)" src="xenia.jpg" id="xenia_def" />
+                </div>
+            </div>
+            <div class="opcionBarra">
+                ancho:  <br />
+                <input type="range" min="0" max="2" value="1" id="tamañoImagenA" step="0.01" onchange="actualizarTodo()" />
+            </div>
+            <div class="opcionBarra">
+                largo:  <br />
+                <input type="range" min="0" max="2" value="1" id="tamañoImagenL" step="0.01" onchange="actualizarTodo()" />
+            </div>
+        </div>
+
+        <div class="menuEspecial oculto">
+            <div class="deslizMenuEspecial"></div>
+            
+            <div class="opcionBarra">
+                grosor:  <br />
+                <input type="range" min="0" max="100" value="5" id="tamañoLinea" step="1" onchange="actualizarTodo()" />
+            </div>
+
+            <div class="opcionEspecial">
+                dibujar
+                <p>¿rellenar?  <input type="checkbox" id="puedeRellenar" onchange="actualizarTodo()"/></p>
+                <p>¿dibujar trazo? <input type="checkbox" id="puedeTrazar" onchange="actualizarTodo()" /></p>
+            </div>
+
+            <div class="opcionEspecial">
+                color:
+                <p>relleno: <input type="color" id="colorRelleno" onchange="actualizarTodo()" /></p>
+                <p>trazo: <input type="color" id="colorTrazo" onchange="actualizarTodo()" /></p>
+            </div>
+
+            <div class="menuInferior">
+                <div class="opcion" onclick="dibujarLinea(); seleccionado(this)">
+                    Dibujar linea
+                </div>
+                <div class="opcion" onclick="dibujarRectangulos(); seleccionado(this)">
+                    Dibujar rectangulo
+                </div>
+                <div class="opcion" onclick="dibujarCirculo(); seleccionado(this)">
+                    Dibujar circulo
+                </div>
+                <div class="opcion" onclick="borrarRectangulo(); seleccionado(this)">
+                    Borrar area a seleccionar
+                </div>
+            </div>
+
+            <div class="menuInferior">
+                <div class="opcion" onclick="regresar()">
+                    Deshacer
+                </div>
+                <div class="opcion" onclick="retroceder()">
+                    Rehacer
+                </div>
+                <div class="opcion" onclick="limpiarTodo()">
+                    Limpiar
+                </div>
+                <div class="opcion">
+                    <a href="#" onclick="descargarArchivo(this)">Descargar</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="canvas" ondrop="soltar(event);" ondragover="sobre(event)">
+            <canvas id="lienzo" width="1280" height="800">
+            <!-- <canvas id="lienzo" width="5" height="5"> -->
+                <p>Si estas viendo esto, puede que tu navegador no soporte la etiqueta canvas, o
+                estes usando un navegador tipo Thor</p>
+            </canvas>
+        </div>
+    </body>
+
+    <script type="text/javascript" src="src/edit_imagen.js"></script>
+    <script type="text/javascript" src="src/filtros.js"></script>
+    <script type="text/javascript" src="src/dibujar.js"></script>
+    <script type="text/javascript" src="src/juego_vida.js"></script>
+</html>
+
+<!-----------------------
+<div class="estampaEspecial">
+    <img onclick="dibujarEstampas(this)" id="imagenSeleccionada" ondragover="sobreMiniatura(this)" ondrop="soltarMiniatura(this)" />
+</div>
+    <script type="text/javascript" src="src/estampaEspecial.js"></script>
+------------>
