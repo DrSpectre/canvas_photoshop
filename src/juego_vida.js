@@ -1,7 +1,9 @@
 
 function juego_vida_base(){
     let pixeles = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    let canvas_secundario = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    let neo_pixeles = ctx.getImageData(0, 0, canvas.width, canvas.height)
+    limpiarTodo();
+    // let canvas_secundario = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
     for(x = 1; x < pixeles.width + 1; x += 1){
         let x_superior = ((x - 1) < 1) ? pixeles.width : x - 1;
@@ -11,7 +13,7 @@ function juego_vida_base(){
             let izquierda = (y - 1) < 1 ? pixeles.height : y - 1;
             let derecha = (y > pixeles.height) ? 0 : y + 1;
 
-            for(indice_color = 4; indice_color > 0; indice_color -= 1){
+            for(indice_color = 4; indice_color > 1; indice_color -= 1){
                 let automatas = {
                     vecinos: [ 
                     //Superior
@@ -29,40 +31,47 @@ function juego_vida_base(){
                     centro: pixeles.data[x * y * 4 - indice_color],
                 }
 
-                pixeles.data[x * y * 4 - indice_color] = reglas_juego(automatas)
+                neo_pixeles.data[x * y * 4 - indice_color] = reglas_juego(automatas)
             }
             //console.log("<== x: " + x + ", y: " + y + "==>")
             //console.log(automatas)
         }
     }
 
-    ctx.putImageData(pixeles, 0, 0);
+    ctx.putImageData(neo_pixeles, 0, 0);
+
     //añadirPasado();
 }
 
 function reglas_juego(pixeles){
     // let barra_vida = document.getElementById("umbral").value;
-    let barra_vida = 126;
+    let barra_vida = 100;
 
     let contador_celulas_vivas = 0
 
     for(indice = 0; indice < pixeles.vecinos.length; indice += 1){
-        if(pixeles.vecinos[indice] > barra_vida){
-            contador_celulas_vivas += 1
-        }
+        contador_celulas_vivas += pixeles.vecinos[indice] > barra_vida
     }
+
+    //console.log(contador_celulas_vivas)
 
     if(contador_celulas_vivas == 3 && pixeles.centro == 0){
         return 158
     }
 
-    if(contador_celulas_vivas > 3)
+    if(contador_celulas_vivas > 3 || contador_celulas_vivas < 1){
         return 0
-    else if(contador_celulas_vivas < 1)
-        return 0
+    }
 
     return pixeles.centro
 
+
+}
+
+function ciclo(){
+    setInterval(() => {
+        juego_vida_base()
+    }, 500);
 
 }
 
