@@ -1,5 +1,5 @@
 let umbral_vida = 135
-let actualizar_estado = true
+let actualizar_estado = false
 
 let opciones_interfaz = {
     barra_umbral: document.querySelector("#UmbralVida"),
@@ -59,9 +59,15 @@ function juego_vida_base(){
                         break;
 
                     case "revivir": //La opcion de revivir permite resucitar celulas aledañas, procura no tener enc uetna el umbral para evitar tener problemas con celulas condenads a morir
-                        neo_pixeles.data[(x * pixeles.width + y) * 4 - 4] = (canvasSecundario.data[(x * pixeles.width + y) * 4 - 4] > umbral_vida) ? canvasSecundario.data[(x * pixeles.width + y) * 4 - 4] : umbral_vida + 1;
-                        neo_pixeles.data[(x * pixeles.width + y) * 4 - 3] = (canvasSecundario.data[(x * pixeles.width + y) * 4 - 3] > umbral_vida) ? canvasSecundario.data[(x * pixeles.width + y) * 4 - 3] : umbral_vida + 1;
-                        neo_pixeles.data[(x * pixeles.width + y) * 4 - 2] = (canvasSecundario.data[(x * pixeles.width + y) * 4 - 2] > umbral_vida) ? canvasSecundario.data[(x * pixeles.width + y) * 4 - 2] : umbral_vida + 1;
+                        if(Math.random() * 25 > 20){
+                            neo_pixeles.data[(x * pixeles.width + y) * 4 - 4] = (canvasSecundario.data[(x * pixeles.width + y) * 4 - 4] > umbral_vida) ? canvasSecundario.data[(x * pixeles.width + y) * 4 - 4] : umbral_vida + 1;
+                            neo_pixeles.data[(x * pixeles.width + y) * 4 - 3] = (canvasSecundario.data[(x * pixeles.width + y) * 4 - 3] > umbral_vida) ? canvasSecundario.data[(x * pixeles.width + y) * 4 - 3] : umbral_vida + 1;
+                            neo_pixeles.data[(x * pixeles.width + y) * 4 - 2] = (canvasSecundario.data[(x * pixeles.width + y) * 4 - 2] > umbral_vida) ? canvasSecundario.data[(x * pixeles.width + y) * 4 - 2] : umbral_vida + 1;
+                        }
+
+                        else{
+                            neo_pixeles.data[(x * pixeles.width + y) * 4 - indice_color] = (canvasSecundario.data[(x * pixeles.width + y) * 4 - indice_color] > umbral_vida) ? canvasSecundario.data[(x * pixeles.width + y) * 4 - indice_color] : umbral_vida + 1;
+                        }
                         continue;
 
                     case "morir":
@@ -76,7 +82,8 @@ function juego_vida_base(){
 
     if(actualizar_estado){
         setInterval(() => {
-            juego_vida_base()
+            if(actualizar_estado)
+                juego_vida_base()
         }, 10);
     }
 }
