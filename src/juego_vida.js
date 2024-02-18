@@ -1,15 +1,35 @@
-const umbral_vida = 135
+let umbral_vida = 135
+let actualizar_estado = true
+
+let opciones_interfaz = {
+    barra_umbral: document.querySelector("#UmbralVida"),
+    actualizar_estado_boton: document.querySelector("#actualizar_estado_marcador")
+}
+
+function actualizar_juego_vida(evento){
+    umbral_vida = opciones_interfaz.barra_umbral.value;
+
+    if(evento.target.id == "actualizar_estado_marcador"){
+        actualizar_estado = !actualizar_estado
+        if(actualizar_estado){
+            juego_vida_base()
+            opciones_interfaz.actualizar_estado_boton.innerText = "Detener juego"
+        }
+
+        else{
+            opciones_interfaz.actualizar_estado_boton.innerText = "Reanudar juego"
+        }
+    }
+}
 
 
 function juego_vida_base(){
     let pixeles = ctx.getImageData(0, 0, canvas.width, canvas.height);
     let neo_pixeles = ctx.getImageData(0, 0, canvas.width, canvas.height)
-    // let canvas_secundario = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
     for(x = 0; x < pixeles.height; x += 1){
         let x_superior = ((x - 1) < -1) ? pixeles.height - 1 : x - 1;
         let x_inferior = (x + 1) % pixeles.height; 
-        // console.log("X: " + x)
 
         for(y = 0; y < pixeles.width; y += 1){
             let izquierda = (y - 1) < - 1 ? pixeles.width - 1 : y - 1;
@@ -36,27 +56,29 @@ function juego_vida_base(){
 
                 switch(reglas_juego(automatas)){
                     case "mantener":
-                        //neo_pixeles.data[(x * pixeles.width + y) * 4 - indice_color] = automatas.centro
                         break;
 
-                    case "revivir":
+                    case "revivir": //La opcion de revivir permite resucitar celulas aledañas, procura no tener enc uetna el umbral para evitar tener problemas con celulas condenads a morir
                         neo_pixeles.data[(x * pixeles.width + y) * 4 - 4] = (canvasSecundario.data[(x * pixeles.width + y) * 4 - 4] > umbral_vida) ? canvasSecundario.data[(x * pixeles.width + y) * 4 - 4] : umbral_vida + 1;
                         neo_pixeles.data[(x * pixeles.width + y) * 4 - 3] = (canvasSecundario.data[(x * pixeles.width + y) * 4 - 3] > umbral_vida) ? canvasSecundario.data[(x * pixeles.width + y) * 4 - 3] : umbral_vida + 1;
                         neo_pixeles.data[(x * pixeles.width + y) * 4 - 2] = (canvasSecundario.data[(x * pixeles.width + y) * 4 - 2] > umbral_vida) ? canvasSecundario.data[(x * pixeles.width + y) * 4 - 2] : umbral_vida + 1;
                         continue;
-                        //neo_pixeles.data[(x * pixeles.width + y) * 4 - indice_color] = 180
-                        break;
 
                     case "morir":
                         neo_pixeles.data[(x * pixeles.width + y) * 4 - indice_color] = 1
                         break;
                 }
-                // neo_pixeles.data[(x * pixeles.width + y) * 4 - indice_color] = reglas_juego(automatas)
             }
         }
     }
 
     ctx.putImageData(neo_pixeles, 0, 0);
+
+    if(actualizar_estado){
+        setInterval(() => {
+            juego_vida_base()
+        }, 10);
+    }
 }
 
 function reglas_juego(pixeles){
@@ -65,8 +87,6 @@ function reglas_juego(pixeles){
     for(indice = 0; indice < pixeles.vecinos.length; indice += 1){
         contador_celulas_vivas += pixeles.vecinos[indice] > umbral_vida; 
     }
-
-    //console.log(contador_celulas_vivas)
 
     if(contador_celulas_vivas == 3 && pixeles.centro < 10){
         return "revivir"
@@ -82,14 +102,14 @@ function reglas_juego(pixeles){
     }
 
     return "morir"
-    // return 1
 }
 
 function ciclo(){
     setInterval(() => {
         juego_vida_base()
     }, 1500);
-
 }
+
+
 
 
