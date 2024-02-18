@@ -12,6 +12,7 @@ function sobre(evento){
 
 function soltar(evento){
     console.log("funcion soltar");
+    evento.preventDefault();
 
     if(evento.dataTransfer.items){
         if(evento.dataTransfer.items[0].kind === "file"){
